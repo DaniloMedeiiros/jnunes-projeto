@@ -1,0 +1,492 @@
+/* src/pages/Login/Login.css */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body::before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100px;
+  background: url('../../imagens/top-banner.png') no-repeat center center;
+  background-size: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #faf9f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding-top: 120px;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.logo-topo {
+  position: absolute;
+  top: 25px;
+  left: 90px;
+  width: 180px;
+  z-index: 10;
+}
+
+/* Container principal do formulário */
+.form-container {
+  width: 50%; /* Ajuste conforme necessário */
+  margin-right: 350px; /* Empurra para a esquerda */
+  padding: 20px 20px 20px 0; /* Padding apenas à direita */
+}
+
+/* Container interno do formulário */
+.form-content {
+  max-width: 400px;
+  width: 100%;
+}
+
+/* Títulos */
+.form-content h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #333;
+  text-align: left;
+}
+
+.form-content .subtitulo {
+  color: #d91c43;
+  margin-bottom: 30px;
+  font-weight: 500;
+  font-size: 14px;
+  text-align: left;
+}
+
+/* Formulário */
+.form-content form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.form-content label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #555;
+  width: 100%;
+}
+
+.form-content input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.form-content input:focus {
+  outline: none;
+  border-color: #d91c43;
+}
+
+/* Links e botões */
+.form-content .esqueceu {
+  font-size: 12px;
+  color: #555;
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 20px;
+  transition: color 0.3s;
+}
+
+.form-content .esqueceu:hover {
+  color: #d91c43;
+}
+
+.form-content .button {
+  background-color: #d91c43;
+  color: white;
+  padding: 14px;
+  width: 100%;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.form-content .button:hover {
+  background-color: #b8183a;
+}
+
+/* Rodapé */
+.form-content .footer {
+  margin-top: 20px;
+  font-size: 12px;
+  color: #aaa;
+  text-align: left;
+}
+
+.esqueceu {
+  all: unset; /* Reseta todos os estilos */
+  color: #555;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.esqueceu:hover {
+  color: #d91c43;
+}
+
+.mascote-wrapper {
+  position: relative;
+  width: 400px;
+  height: 400px;
+}
+
+.circle {
+  position: absolute;
+  border: 2px solid #f18ca5;
+  border-radius: 50%;
+  top: 50%;
+  left: 40%;
+  transform: translate(-50%, -50%);
+}
+
+.circle1 {
+  width: 400px;
+  height: 400px;
+}
+
+.circle2 {
+  width: 440px;
+  height: 440px;
+}
+
+.circle3 {
+  width: 480px;
+  height: 480px;
+}
+
+.mascote-container {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  top: 0%;
+  left: -27%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  overflow: hidden;
+  z-index: 2;
+  animation: flutuar 3s infinite ease-in-out;
+}
+
+.mascote-container img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  transform: translateY(20px);
+}
+
+@keyframes flutuar {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+}
+
+.itens-login-1 {
+  position: absolute;
+  top: 870px;
+  left: 0px;
+  width: 50px;
+  z-index: 5;
+}
+
+.itens-login-2 {
+  position: absolute;
+  top: 350px;
+  left: 1050px;
+  width: 40px;
+  z-index: 5;
+}
+
+/* Continuação do src/pages/Login/Login.css */
+
+.itens-login-3 {
+  position: absolute;
+  top: 280px;
+  left: 1470px;
+  width: 50px;
+  z-index: 5;
+}
+
+.itens-login-4 {
+  position: absolute;
+  top: 330px;
+  left: 520px;
+  width: 50px;
+  z-index: -4;
+  opacity: 0.3;
+}
+
+.itens-login-5 {
+  position: absolute;
+  top: 790px;
+  left: 1250px;
+  width: 300px;
+  z-index: 5;
+}
+
+.itens-login-6 {
+  position: absolute;
+  top: 300px;
+  left: 1130px;
+  width: 60px;
+  z-index: 5;
+}
+
+.itens-login-7 {
+  position: absolute;
+  top: 640px;
+  left: 1100px;
+  width: 60px;
+  z-index: 5;
+}
+
+.itens-login-8 {
+  position: absolute;
+  top: 420px;
+  left: 1460px;
+  width: 40px;
+  z-index: 5;
+}
+
+/* MODAL CORRIGIDO - Versão Final */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* Fundo escuro só do overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background-color: rgb(255, 255, 255) !important; /* Fundo totalmente branco */
+  width: 400px !important; /* Largura fixa */
+  max-height: 50vh !important; /* Altura máxima de 80% da tela */
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  position: static !important;
+  margin: 20px; /* Espaçamento mínimo */
+  overflow-y: auto; /* Permite scroll se conteúdo for muito grande */
+}
+
+/* Garante que o conteúdo não ultrapasse os limites */
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* Importante para o conteúdo não esticar */
+}
+
+.emoji-icon {
+  width: 70px;
+  margin: 0 auto 15px;
+  display: block;
+  animation: flutuarEmoji 2.5s infinite ease-in-out;
+}
+
+@keyframes flutuarEmoji {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Estilos para todos os steps */
+.step {
+  display: none;
+  width: 100%;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.step.active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.modal-step1-title,
+.modal-step2-title,
+.modal-step3-title,
+.modal-step4-title {
+  color: #d91c43;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  text-align: center;
+  width: 100%;
+  margin-top: 0;
+}
+
+.modal-step1-text,
+.modal-step2-text,
+.modal-step3-text,
+.modal-step4-text {
+  color: #555;
+  text-align: center;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.modal input {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 8px 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.modal input:focus {
+  border-color: #d91c43;
+  box-shadow: 0 0 0 2px rgba(217, 28, 67, 0.2);
+}
+
+.password-requirements {
+  width: 100%;
+  margin: 10px 0;
+  padding-left: 20px;
+}
+
+.password-requirements li {
+  color: #ff6b6b;
+  font-size: 0.75rem;
+  margin-bottom: 5px;
+  list-style-type: none;
+  position: relative;
+  transition: color 0.3s;
+}
+
+.password-requirements li:before {
+  content: "•";
+  position: absolute;
+  left: -15px;
+}
+
+.password-requirements li.valid {
+  color: #51cf66;
+}
+
+/* Botões do modal */
+.modal button:not(.close-modal) {
+  background-color: #d91c43;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+  transition: background-color 0.3s;
+}
+
+.modal button:hover:not(.close-modal) {
+  background-color: #b8183a;
+}
+
+.modal-confirm-btn {
+  background-color: #d91c43;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  width: auto;
+  margin: 20px auto 0;
+  transition: background-color 0.3s;
+}
+
+.modal-confirm-btn:hover {
+  background-color: #b8183a;
+}
+
+/* Botão de fechar posicionado corretamente */
+.close-modal {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.close-modal:hover {
+  color: #555;
+}
+
+/* Mensagens de erro */
+.input-error {
+  border-color: #ff4444 !important;
+}
+
+.error-message {
+  color: #ff4444;
+  font-size: 0.8rem;
+  margin-top: -5px;
+  margin-bottom: 10px;
+  width: 100%;
+  text-align: center;
+}
+
+.error-message.active {
+  display: block;
+}
+
+.error {
+  color: #ff4444;
+  font-size: 0.8rem;
+  margin-top: 0.2rem;
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Efeito de blur quando modal aberto */
+body.modal-open {
+  overflow: hidden;
+}
+
+body.modal-open .container {
+  filter: blur(3px);
+  transition: filter 0.3s;
+}
