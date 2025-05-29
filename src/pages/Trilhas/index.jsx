@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './style.css';
 
-export default function Trilhas() {
-  // Estados principais
+export default function PaginaTrilhaCompleta() {
+  // Estados do menu e modais
   const [menuAberto, setMenuAberto] = useState(true);
   const [caixaAberta, setCaixaAberta] = useState({
     notificacao: false,
@@ -20,43 +20,82 @@ export default function Trilhas() {
     confirmacao: false
   });
 
-  // Hook de navegação
-  const navigate = useNavigate();
+  // Estados do carrossel
+  const [currentIndexAndamento, setCurrentIndexAndamento] = useState(0);
+  const [currentIndexDisponiveis, setCurrentIndexDisponiveis] = useState(0);
 
-  // Refs
+  const navigate = useNavigate();
   const notificacaoBoxRef = useRef(null);
   const perfilBoxRef = useRef(null);
   const modalDadosRef = useRef(null);
   const modalSenhaRef = useRef(null);
   const modalTermosRef = useRef(null);
+  const carrosselAndamentoRef = useRef(null);
+  const carrosselDisponiveisRef = useRef(null);
 
-  // Fechar modais/caixas ao clicar fora
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        !event.target.closest('.trilha-icone') &&
-        !event.target.closest('.trilha-box-notificacao') &&
-        !event.target.closest('.trilha-box-perfil')
-      ) {
-        setCaixaAberta({ notificacao: false, perfil: false });
-      }
+  // Dados das trilhas
+  const [trilhasEmAndamento] = useState([
+{ 
+    id: 1, 
+    titulo: "Segurança no Canteiro de Obras Básico", 
+    progresso: 100, 
+    concluido: true 
+  },
+  { 
+    id: 2, 
+    titulo: "Manuseio de Ferramentas Elétricas", 
+    progresso: 27 
+  },
+  { 
+    id: 3, 
+    titulo: "EPIs - Equipamentos de Proteção Individual", 
+    progresso: 27 
+  },
+  { 
+    id: 4, 
+    titulo: "Primeiros Socorros em Obras", 
+    progresso: 27 
+  },
+  { 
+    id: 9, 
+    titulo: "Prevenção de Quedas em Altura", 
+    progresso: 50 
+  },
+  { 
+    id: 10, 
+    titulo: "Sinalização de Segurança", 
+    progresso: 75 
+  }
+  ]);
 
-      if (modalDadosRef.current && event.target === modalDadosRef.current) {
-        setModalVisivel({ ...modalVisivel, dados: false });
-      }
-      if (modalSenhaRef.current && event.target === modalSenhaRef.current) {
-        setModalVisivel({ ...modalVisivel, senha: false });
-      }
-      if (modalTermosRef.current && event.target === modalTermosRef.current) {
-        setModalVisivel({ ...modalVisivel, termos: false });
-      }
-    };
+  const [trilhasDisponiveis] = useState([
+{ 
+    id: 5, 
+    titulo: "NR-35 - Trabalho em Altura" 
+  },
+  { 
+    id: 6, 
+    titulo: "NR-10 - Segurança em Eletricidade" 
+  },
+  { 
+    id: 7, 
+    titulo: "Combate a Incêndios" 
+  },
+  { 
+    id: 8, 
+    titulo: "Movimentação de Cargas" 
+  },
+  { 
+    id: 11, 
+    titulo: "Gestão de Resíduos na Construção" 
+  },
+  { 
+    id: 12, 
+    titulo: "Ergonomia no Canteiro de Obras" 
+  }
+  ]);
 
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
-  }, [modalVisivel]);
-
-  // Funções de toggle
+  // Funções do menu e modais
   const toggleMenu = () => setMenuAberto(!menuAberto);
 
   const toggleCaixa = (tipo) => {
@@ -80,25 +119,68 @@ export default function Trilhas() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('userData');
     navigate('/login', { replace: true });
     setCaixaAberta({ ...caixaAberta, perfil: false });
   };
 
+  // Funções do carrossel
+  const navegarCarrossel = (direcao, tipoTrilha) => {
+    if (tipoTrilha === 'andamento') {
+      const novoIndex = direcao === 'proximo' 
+        ? (currentIndexAndamento + 1) % trilhasEmAndamento.length
+        : (currentIndexAndamento - 1 + trilhasEmAndamento.length) % trilhasEmAndamento.length;
+      setCurrentIndexAndamento(novoIndex);
+      
+      if (carrosselAndamentoRef.current) {
+        const cardWidth = carrosselAndamentoRef.current.children[0]?.offsetWidth || 300;
+        carrosselAndamentoRef.current.scrollTo({
+          left: novoIndex * cardWidth,
+          behavior: 'smooth'
+        });
+      }
+    } else {
+      const novoIndex = direcao === 'proximo' 
+        ? (currentIndexDisponiveis + 1) % trilhasDisponiveis.length
+        : (currentIndexDisponiveis - 1 + trilhasDisponiveis.length) % trilhasDisponiveis.length;
+      setCurrentIndexDisponiveis(novoIndex);
+      
+      if (carrosselDisponiveisRef.current) {
+        const cardWidth = carrosselDisponiveisRef.current.children[0]?.offsetWidth || 300;
+        carrosselDisponiveisRef.current.scrollTo({
+          left: novoIndex * cardWidth,
+          behavior: 'smooth'
+        });
+      }
+    }
+  };
+
+  // Função para navegar para detalhes da trilha
+  const handleCardClick = (trilhaId, tipoTrilha) => {
+    navigate(`/trilha/${trilhaId}`, { 
+      state: { 
+        tipo: tipoTrilha,
+        progresso: trilhasEmAndamento.find(t => t.id === trilhaId)?.progresso 
+      } 
+    });
+  };
+
   return (
-    <div className="trilha-container freeza-loyout">
+    <div className="trilha-container">
+      {/* Background */}
+      <div className="trilha-background"></div>
+
       {/* Menu Lateral */}
       <div className={`trilha-menu-lateral ${menuAberto ? '' : 'trilha-menu-fechado'}`}>
         <div className="trilha-logo-container">
           <img 
             src="src/imagens/logo-aberta.png" 
             className={`trilha-logo trilha-logo-aberta ${menuAberto ? 'trilha-visivel' : 'trilha-escondido'}`} 
-            alt="Logo Jotanunes"
+            alt="Logo"
           />
           <img 
             src="src/imagens/logo-fechada.png" 
             className={`trilha-logo trilha-logo-fechada ${!menuAberto ? 'trilha-visivel' : 'trilha-escondido'}`} 
-            alt="Logo Jotanunes"
+            alt="Logo"
           />
           <button id="trilha-toggle-menu" onClick={toggleMenu}>
             <img 
@@ -143,16 +225,16 @@ export default function Trilhas() {
         </ul>
       </div>
 
-      {/* Conteúdo Principal */}
-      <main className="trilha-conteudo">
-        <header className="trilha-header">
-          <input type="search" placeholder="Buscar..." className="trilha-busca" />
-        </header>
+      {/* Top Bar */}
+      <div className="trilha-topbar">
+        <input 
+          type="search" 
+          placeholder="Buscar..." 
+          className="trilha-busca"
+        />
 
-        {/* Ícones Superiores */}
         <div className="trilha-icones-superiores">
           <div 
-            id="trilha-notificacao-icon" 
             className="trilha-icone"
             onClick={(e) => {
               e.stopPropagation();
@@ -162,7 +244,6 @@ export default function Trilhas() {
             <img src="src/imagens/notificacao.png" alt="Notificação" />
           </div>
           <div 
-            id="trilha-perfil-icon" 
             className="trilha-icone"
             onClick={(e) => {
               e.stopPropagation();
@@ -171,12 +252,11 @@ export default function Trilhas() {
           >
             <img src="src/imagens/perfil.png" alt="Perfil" />
           </div>
-          <div id="trilha-infeite-icon" className="trilha-icone">
+          <div className="trilha-icone">
             <img src="src/imagens/infeite.png" alt="Infeite" />
           </div>
         </div>
 
-        {/* Caixa de Notificação */}
         {caixaAberta.notificacao && (
           <div 
             ref={notificacaoBoxRef}
@@ -193,7 +273,6 @@ export default function Trilhas() {
           </div>
         )}
 
-        {/* Caixa de Perfil */}
         {caixaAberta.perfil && (
           <div 
             ref={perfilBoxRef}
@@ -216,222 +295,306 @@ export default function Trilhas() {
             </div>
             <button 
               className="trilha-perfil-opcao"
-              onClick={(e) => {
-                e.preventDefault();
-                toggleModal('dados');
-              }}
+              onClick={() => toggleModal('dados')}
             >
               <img src="src/imagens/icone-perfil-dados.png" alt="Meus Dados" />
               <span>Meus Dados</span>
             </button>
             <button 
               className="trilha-perfil-opcao"
-              onClick={(e) => {
-                e.preventDefault();
-                toggleModal('senha');
-              }}
+              onClick={() => toggleModal('senha')}
             >
               <img src="src/imagens/icone-perfil-seguranca.png" alt="Segurança" />
               <span>Segurança</span>
             </button>
             <button 
               className="trilha-perfil-opcao"
-              onClick={(e) => {
-                e.preventDefault();
-                toggleModal('termos');
-              }}
+              onClick={() => toggleModal('termos')}
             >
               <img src="src/imagens/icone-perfil-termos.png" alt="Termos" />
               <span>Termos e Condições</span>
             </button>
             <button 
               className="trilha-perfil-opcao trilha-logout-btn"
-              onClick={(e) => {
-                e.preventDefault();
-                handleLogout();
-              }}
+              onClick={handleLogout}
             >
               <img src="src/imagens/icone-logout.png" alt="Logout" />
               <span>Sair</span>
             </button>
           </div>
         )}
+      </div>
 
-        {/* Modais (mantidos pois são necessários para o funcionamento dos menus) */}
-        {/* Modal Meus Dados */}
-        {modalVisivel.dados && (
+      {/* Conteúdo Principal com Carrossel */}
+      <div className="trilha-conteudo-principal">
+        {/* TRILHAS EM ANDAMENTO */}
+        <div className="trilha-secao-carrossel">
+          <div className="trilha-secao-cabecalho">
+            <h2 className="trilha-secao-titulo">Trilhas em andamento</h2>
+            <div className="trilha-secao-navegacao">
+              <button 
+                className="trilha-secao-seta"
+                onClick={() => navegarCarrossel('anterior', 'andamento')}
+                aria-label="Voltar"
+              >
+                {"<"}
+              </button>
+              <button 
+                className="trilha-secao-seta"
+                onClick={() => navegarCarrossel('proximo', 'andamento')}
+                aria-label="Avançar"
+              >
+                {">"}
+              </button>
+            </div>
+          </div>
+
+          <div 
+            className="trilha-secao-carrossel-container"
+            ref={carrosselAndamentoRef}
+          >
+            {trilhasEmAndamento.map((trilha) => (
+              <div 
+                key={`andamento-${trilha.id}`} 
+                className="trilha-secao-card"
+                onClick={() => handleCardClick(trilha.id, 'andamento')}
+              >
+                <div className="trilha-secao-imagem" />
+                <h3 className="trilha-secao-nome">{trilha.titulo}</h3>
+                <div className="trilha-secao-barra">
+                  <div
+                    className="trilha-secao-progresso"
+                    style={{ width: `${trilha.progresso}%` }}
+                  />
+                </div>
+                <div className="trilha-secao-status">
+                  <span className="trilha-secao-tag">Segurança</span>
+                  {trilha.concluido ? (
+                    <span className="trilha-secao-check">✔</span>
+                  ) : (
+                    <span className="trilha-secao-andamento">Em andamento</span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* TRILHAS DISPONÍVEIS */}
+        <div className="trilha-secao-carrossel">
+          <div className="trilha-secao-cabecalho">
+            <h2 className="trilha-secao-titulo">Trilhas disponíveis</h2>
+            <div className="trilha-secao-navegacao">
+              <button 
+                className="trilha-secao-seta"
+                onClick={() => navegarCarrossel('anterior', 'disponiveis')}
+                aria-label="Voltar"
+              >
+                {"<"}
+              </button>
+              <button 
+                className="trilha-secao-seta"
+                onClick={() => navegarCarrossel('proximo', 'disponiveis')}
+                aria-label="Avançar"
+              >
+                {">"}
+              </button>
+            </div>
+          </div>
+
+          <div 
+            className="trilha-secao-carrossel-container"
+            ref={carrosselDisponiveisRef}
+          >
+            {trilhasDisponiveis.map((trilha) => (
+              <div key={`disponivel-${trilha.id}`} className="trilha-secao-card">
+                <div className="trilha-secao-imagem" />
+                <h3 className="trilha-secao-nome">{trilha.titulo}</h3>
+                <button 
+                  className="trilha-secao-botao"
+                  onClick={() => handleCardClick(trilha.id, 'disponivel')}
+                >
+                  Ver Curso
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Modais */}
+      {modalVisivel.dados && (
+        <div 
+          className="trilha-modal"
+          onClick={() => toggleModal('dados')}
+        >
           <div 
             ref={modalDadosRef}
-            className="trilha-modal"
-            style={{ display: 'flex' }}
+            className="trilha-modal-conteudo"
+            onClick={e => e.stopPropagation()}
           >
-            <div className="trilha-modal-conteudo">
-              <span 
-                className="trilha-fechar-modal"
-                onClick={() => toggleModal('dados')}
-              >
-                &times;
-              </span>
-              <img 
-                src="src/imagens/perfil-modal.jpg" 
-                alt="Foto de perfil" 
-                className="trilha-modal-foto" 
-              />
-              <h2>Meus Dados</h2>
-              <div className="trilha-dados-usuario">
-                <div className="trilha-modal-campo">
-                  <label>Nome</label>
-                  <input type="text" value="João da Silva" readOnly />
-                </div>
-                <div className="trilha-modal-campo">
-                  <label>Matrícula</label>
-                  <input type="text" value="123456" readOnly />
-                </div>
-                <div className="trilha-modal-campo">
-                  <label>Setor</label>
-                  <input type="text" value="TI" readOnly />
-                </div>
-                <div className="trilha-modal-campo">
-                  <label>Função</label>
-                  <input type="text" value="Desenvolvedor Front-End" readOnly />
-                </div>
+            <span 
+              className="trilha-fechar-modal"
+              onClick={() => toggleModal('dados')}
+            >
+              &times;
+            </span>
+            <div className='trilha-modal-foto'>
+              <img src="src/imagens/perfil-modal.jpg" alt="Foto de perfil" />
+            </div>
+            <h2>Meus Dados</h2>
+            <div className="trilha-dados-usuario">
+              <div className="trilha-modal-campo">
+                <label>Nome</label>
+                <input type="text" value="João da Silva" readOnly />
+              </div>
+              <div className="trilha-modal-campo">
+                <label>Matrícula</label>
+                <input type="text" value="123456" readOnly />
+              </div>
+              <div className="trilha-modal-campo">
+                <label>Setor</label>
+                <input type="text" value="TI" readOnly />
+              </div>
+              <div className="trilha-modal-campo">
+                <label>Função</label>
+                <input type="text" value="Desenvolvedor Front-End" readOnly />
               </div>
             </div>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Modal Alterar Senha */}
-        {modalVisivel.senha && (
+      {modalVisivel.senha && (
+        <div 
+          className="trilha-modal"
+          onClick={() => toggleModal('senha')}
+        >
           <div 
             ref={modalSenhaRef}
-            className="trilha-modal"
-            style={{ display: 'flex' }}
+            className="trilha-modal-conteudo"
+            onClick={e => e.stopPropagation()}
           >
-            <div className="trilha-modal-conteudo">
-              <span 
-                className="trilha-fechar-modal"
-                onClick={() => toggleModal('senha')}
-              >
-                &times;
-              </span>
-              <img 
-                src="src/imagens/perfil-seguranca.png" 
-                alt="Ícone de Segurança" 
-                className="trilha-modal-foto" 
-              />
-              <h2>Segurança</h2>
-              <p>Altere sua senha aqui</p>
-              <div className="trilha-dados-usuario">
-                <div className="trilha-modal-campo">
-                  <label>Senha Atual</label>
-                  <div className="trilha-senha-container">
-                    <input 
-                      type={senhaVisivel.atual ? "text" : "password"} 
-                      placeholder="Digite sua senha atual aqui" 
-                      className="trilha-senha-input" 
+            <span 
+              className="trilha-fechar-modal"
+              onClick={() => toggleModal('senha')}
+            >
+              &times;
+            </span>
+            <div className="trilha-modal-foto">
+              <img src="src/imagens/perfil-seguranca.png" alt="Ícone de Segurança" />
+            </div>
+            <h2>Segurança</h2>
+            <p>Altere sua senha aqui</p>
+            <div className="trilha-dados-usuario">
+              <div className="trilha-modal-campo">
+                <label>Senha Atual</label>
+                <div className="trilha-senha-container">
+                  <input 
+                    type={senhaVisivel.atual ? "text" : "password"} 
+                    placeholder="Digite sua senha atual aqui" 
+                    className="trilha-senha-input" 
+                  />
+                  <span 
+                    className="trilha-toggle-senha"
+                    onClick={() => toggleSenha('atual')}
+                  >
+                    <img
+                      src={senhaVisivel.atual 
+                        ? "src/imagens/olho-fechado-modal-senha.png" 
+                        : "src/imagens/olho-aberto-modal-senha.png"}
+                      alt={senhaVisivel.atual ? "Ocultar Senha" : "Mostrar Senha"}
                     />
-                    <span 
-                      className="trilha-toggle-senha"
-                      onClick={() => toggleSenha('atual')}
-                    >
-                      <img
-                        src={senhaVisivel.atual 
-                          ? "src/imagens/olho-fechado-modal-senha.png" 
-                          : "src/imagens/olho-aberto-modal-senha.png"}
-                        alt={senhaVisivel.atual ? "Ocultar Senha" : "Mostrar Senha"}
-                      />
-                    </span>
-                  </div>
+                  </span>
                 </div>
-                <div className="trilha-modal-campo">
-                  <label>Nova Senha</label>
-                  <div className="trilha-senha-container">
-                    <input 
-                      type={senhaVisivel.nova ? "text" : "password"} 
-                      placeholder="Digite sua nova senha aqui" 
-                      className="trilha-senha-input" 
-                    />
-                    <span 
-                      className="trilha-toggle-senha"
-                      onClick={() => toggleSenha('nova')}
-                    >
-                      <img
-                        src={senhaVisivel.nova 
-                          ? "src/imagens/olho-fechado-modal-senha.png" 
-                          : "src/imagens/olho-aberto-modal-senha.png"}
-                        alt={senhaVisivel.nova ? "Ocultar Senha" : "Mostrar Senha"}
-                      />
-                    </span>
-                  </div>
-                </div>
-                <div className="trilha-modal-campo">
-                  <label>Confirmar Senha</label>
-                  <div className="trilha-senha-container">
-                    <input 
-                      type={senhaVisivel.confirmacao ? "text" : "password"} 
-                      placeholder="Confirme sua senha aqui" 
-                      className="trilha-senha-input" 
-                    />
-                    <span 
-                      className="trilha-toggle-senha"
-                      onClick={() => toggleSenha('confirmacao')}
-                    >
-                      <img
-                        src={senhaVisivel.confirmacao 
-                          ? "src/imagens/olho-fechado-modal-senha.png" 
-                          : "src/imagens/olho-aberto-modal-senha.png"}
-                        alt={senhaVisivel.confirmacao ? "Ocultar Senha" : "Mostrar Senha"}
-                      />
-                    </span>
-                  </div>
-                </div>
-                <button className="trilha-btn-alterar-senha">Alterar Senha</button>
               </div>
+              <div className="trilha-modal-campo">
+                <label>Nova Senha</label>
+                <div className="trilha-senha-container">
+                  <input 
+                    type={senhaVisivel.nova ? "text" : "password"} 
+                    placeholder="Digite sua nova senha aqui" 
+                    className="trilha-senha-input" 
+                  />
+                  <span 
+                    className="trilha-toggle-senha"
+                    onClick={() => toggleSenha('nova')}
+                  >
+                    <img
+                      src={senhaVisivel.nova 
+                        ? "src/imagens/olho-fechado-modal-senha.png" 
+                        : "src/imagens/olho-aberto-modal-senha.png"}
+                      alt={senhaVisivel.nova ? "Ocultar Senha" : "Mostrar Senha"}
+                    />
+                  </span>
+                </div>
+              </div>
+              <div className="trilha-modal-campo">
+                <label>Confirmar Senha</label>
+                <div className="trilha-senha-container">
+                  <input 
+                    type={senhaVisivel.confirmacao ? "text" : "password"} 
+                    placeholder="Confirme sua senha aqui" 
+                    className="trilha-senha-input" 
+                  />
+                  <span 
+                    className="trilha-toggle-senha"
+                    onClick={() => toggleSenha('confirmacao')}
+                  >
+                    <img
+                      src={senhaVisivel.confirmacao 
+                        ? "src/imagens/olho-fechado-modal-senha.png" 
+                        : "src/imagens/olho-aberto-modal-senha.png"}
+                      alt={senhaVisivel.confirmacao ? "Ocultar Senha" : "Mostrar Senha"}
+                    />
+                  </span>
+                </div>
+              </div>
+              <button className="trilha-btn-alterar-senha">Alterar Senha</button>
             </div>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Modal Termos e Condições */}
-        {modalVisivel.termos && (
+      {modalVisivel.termos && (
+        <div 
+          ref={modalTermosRef}
+          className="trilha-modal"
+          onClick={() => toggleModal('termos')}
+        >
           <div 
-            ref={modalTermosRef}
-            className="trilha-modal"
-            style={{ display: 'flex' }}
+            className="trilha-modal-conteudo"
+            onClick={e => e.stopPropagation()}
           >
-            <div className="trilha-modal-conteudo">
-              <span 
-                className="trilha-fechar-modal"
-                onClick={() => toggleModal('termos')}
-              >
-                &times;
-              </span>
-              <div className="trilha-modal-foto">
-                <img 
-                  src="src/imagens/perfil-modal-termos.png" 
-                  alt="Termos e Condições" 
-                />
-              </div>
-              <h2>Termos e Condições</h2>
-              <div className="trilha-termos-texto">
-                <p>
-                  1. <strong>Aceitação dos Termos:</strong> 
-                  <br />1.1. Ao acessar e utilizar a plataforma de treinamento online da Jotanunes, o usuário concorda com estes Termos de Uso. Caso não concorde, deve interromper o uso imediatamente.
-                </p>
-                <p>
-                  2. <strong>Cadastro e Conta do Usuário:</strong>
-                  <br />2.1. Para utilizar os serviços da plataforma, é necessário criar uma conta, fornecendo informações verdadeiras e atualizadas.
-                  <br />2.2. O usuário é responsável pela segurança de suas credenciais de acesso e deve notificar a Jotanunes imediatamente em caso de uso não autorizado de sua conta.
-                </p>
-                <p>
-                  3. <strong>Uso da Plataforma:</strong>
-                  <br />3.1. A plataforma é destinada exclusivamente a treinamentos oferecidos pela Jotanunes, e o usuário deve utilizá-la de forma ética e legal.
-                  <br />3.2. É proibida a reprodução ou compartilhamento.
-                </p>
-              </div>
+            <span 
+              className="trilha-fechar-modal"
+              onClick={() => toggleModal('termos')}
+            >
+              &times;
+            </span>
+            <div className="trilha-modal-foto">
+              <img src="src/imagens/perfil-modal-termos.png" alt="Termos e Condições" />
+            </div>
+            <h2>Termos e Condições</h2>
+            <div className="trilha-termos-texto">
+              <p>
+                1. <strong>Aceitação dos Termos:</strong> 
+                <br />1.1. Ao acessar e utilizar a plataforma de treinamento online da Jotanunes, o usuário concorda com estes Termos de Uso. Caso não concorde, deve interromper o uso imediatamente.
+              </p>
+              <p>
+                2. <strong>Cadastro e Conta do Usuário:</strong>
+                <br />2.1. Para utilizar os serviços da plataforma, é necessário criar uma conta, fornecendo informações verdadeiras e atualizadas.
+                <br />2.2. O usuário é responsável pela segurança de suas credenciais de acesso e deve notificar a Jotanunes imediatamente em caso de uso não autorizado de sua conta.
+              </p>
+              <p>
+                3. <strong>Uso da Plataforma:</strong>
+                <br />3.1. A plataforma é destinada exclusivamente a treinamentos oferecidos pela Jotanunes, e o usuário deve utilizá-la de forma ética e legal.
+                <br />3.2. É proibida a reprodução ou compartilhamento.
+              </p>
             </div>
           </div>
-        )}
-      </main>
+        </div>
+      )}
     </div>
   );
 }

@@ -66,20 +66,20 @@ export default function Dashboard() {
       }
 
       // Modais
-      if (modalDadosRef.current && event.target === modalDadosRef.current) {
-        setModalVisivel({ ...modalVisivel, dados: false });
+      if (modalDadosRef.current && !modalDadosRef.current.contains(event.target)) {
+        setModalVisivel(prev => ({...prev, dados: false}));
       }
-      if (modalSenhaRef.current && event.target === modalSenhaRef.current) {
-        setModalVisivel({ ...modalVisivel, senha: false });
+      if (modalSenhaRef.current && !modalSenhaRef.current.contains(event.target)) {
+        setModalVisivel(prev => ({...prev, senha: false}));
       }
-      if (modalTermosRef.current && event.target === modalTermosRef.current) {
-        setModalVisivel({ ...modalVisivel, termos: false });
+      if (modalTermosRef.current && !modalTermosRef.current.contains(event.target)) {
+        setModalVisivel(prev => ({...prev, termos: false}));
       }
     };
 
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
-  }, [modalVisivel]);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Funções de toggle
   const toggleMenu = () => setMenuAberto(!menuAberto);
@@ -364,22 +364,25 @@ export default function Dashboard() {
       {/* Modal Meus Dados */}
       {modalVisivel.dados && (
         <div 
-          ref={modalDadosRef}
           className="modal"
-          style={{ display: 'flex' }}
+          onClick={() => setModalVisivel({...modalVisivel, dados: false})}
         >
-          <div className="modal-conteudo">
-            <span 
+          <div 
+            className="modal-conteudo"
+            onClick={(e) => e.stopPropagation()}
+          >
+             <span 
               className="fechar-modal"
-              onClick={() => toggleModal('dados')}
+              onClick={() => setModalVisivel({...modalVisivel, termos: false})}
             >
               &times;
             </span>
+            <div className='modal-foto'>
             <img 
               src="src/imagens/perfil-modal.jpg" 
               alt="Foto de perfil" 
-              className="modal-foto" 
             />
+            </div>
             <h2>Meus Dados</h2>
             <div className="dados-usuario">
               <div className="modal-campo">
@@ -406,22 +409,25 @@ export default function Dashboard() {
       {/* Modal Alterar Senha */}
       {modalVisivel.senha && (
         <div 
-          ref={modalSenhaRef}
           className="modal"
-          style={{ display: 'flex' }}
+          onClick={() => setModalVisivel({...modalVisivel, senha: false})}
         >
-          <div className="modal-conteudo">
-            <span 
+          <div 
+            className="modal-conteudo"
+            onClick={(e) => e.stopPropagation()}
+          >
+             <span 
               className="fechar-modal"
-              onClick={() => toggleModal('senha')}
+              onClick={() => setModalVisivel({...modalVisivel, termos: false})}
             >
               &times;
             </span>
+            <div className="modal-foto">
             <img 
               src="src/imagens/perfil-seguranca.png" 
-              alt="Ícone de Segurança" 
-              className="modal-foto" 
+              alt="Ícone de Segurança"  
             />
+            </div>
             <h2>Segurança</h2>
             <p>Altere sua senha aqui</p>
             <div className="dados-usuario">
@@ -498,13 +504,13 @@ export default function Dashboard() {
       {modalVisivel.termos && (
         <div 
           ref={modalTermosRef}
-          className="modal"
-          style={{ display: 'flex' }}
+          className={`modal ${modalVisivel.termos ? 'active' : ''}`}
+          onClick={(e) => e.target === modalTermosRef.current && setModalVisivel({...modalVisivel, termos: false})}
         >
-          <div className="modal-conteudo">
+          <div className="modal-conteudo" onClick={e => e.stopPropagation()}>
             <span 
               className="fechar-modal"
-              onClick={() => toggleModal('termos')}
+              onClick={() => setModalVisivel({...modalVisivel, termos: false})}
             >
               &times;
             </span>
