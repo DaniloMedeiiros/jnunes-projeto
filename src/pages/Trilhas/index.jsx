@@ -159,7 +159,7 @@ export default function PaginaTrilhaCompleta() {
     navigate(`/trilha/${trilhaId}`, { 
       state: { 
         tipo: tipoTrilha,
-        progresso: trilhasEmAndamento.find(t => t.id === trilhaId)?.progresso 
+        progresso: trilhasEmAndamento.find(t => t.id === trilhaId)?.progresso || 0
       } 
     });
   };
