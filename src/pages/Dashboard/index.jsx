@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import useDashboardData from '../../hooks/useDashboardData'; // Importa o hook
 import './style.css';
 
 export default function Dashboard() {
@@ -24,27 +25,44 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   // Dados simulados
-  const progressos = [
-    { titulo: "Concluir Módulo 3", progresso: 60 },
-    { titulo: "Exercícios Pendentes Capítulo 6", progresso: 40 },
-    { titulo: "Nível Atual Aprendizado", progresso: 80 }
+  const mockProgressos = [
+    { titulo: 'Concluir Módulo 3', progresso: 60 },
+    { titulo: 'Exercícios Pendentes Capítulo 6', progresso: 40 },
+    { titulo: 'Nível Atual Aprendizado', progresso: 80 }
   ];
 
-  const topAprendizes = [
-    { nome: "Rafaela", foto: "rafaela.jpg", pontos: 950 },
-    { nome: "Pedro", foto: "pedro.jpg", pontos: 870 },
-    { nome: "Fernanda", foto: "fernanda.jpg", pontos: 790 },
-    { nome: "Cláudia", foto: "claudia.jpg", pontos: 750 },
-    { nome: "Carlos", foto: "carlos.jpg", pontos: 700 },
-    { nome: "Arthur", foto: "arthur.jpg", pontos: 650 }
+  const mockTopAprendizes = [
+    { nome: 'Rafaela', foto: 'rafaela.jpg', pontos: 950 },
+    { nome: 'Pedro', foto: 'pedro.jpg', pontos: 870 },
+    { nome: 'Fernanda', foto: 'fernanda.jpg', pontos: 790 },
+    { nome: 'Cláudia', foto: 'claudia.jpg', pontos: 750 },
+    { nome: 'Carlos', foto: 'carlos.jpg', pontos: 700 },
+    { nome: 'Arthur', foto: 'arthur.jpg', pontos: 650 }
   ];
 
-  const estatisticas = [
-    { valor: 7, label: "Certificados", icone: "certificado.png" },
-    { valor: 1765, label: "Horas de Estudo", icone: "relogio.png" },
-    { valor: 23, label: "Módulos Finalizados", icone: "modulo.png" },
-    { valor: 38, label: "Desafios Concluídos", icone: "desafio.png" }
+  const mockEstatisticas = [
+    { valor: 7, label: 'Certificados', icone: 'certificado.png' },
+    { valor: 1765, label: 'Horas de Estudo', icone: 'relogio.png' },
+    { valor: 23, label: 'Módulos Finalizados', icone: 'modulo.png' },
+    { valor: 38, label: 'Desafios Concluídos', icone: 'desafio.png' }
   ];
+
+  // Hook para dados reais
+  const { dashboardData, isLoading, error } = useDashboardData();
+
+  // Determina se deve usar dados mockados
+  const USE_MOCKED_DATA = import.meta.env.VITE_USE_MOCKED_DATA === 'true';
+
+  // Dados a serem usados na renderização
+  const progressos = USE_MOCKED_DATA
+    ? mockProgressos
+    : dashboardData?.progressos || [];
+  const topAprendizes = USE_MOCKED_DATA
+    ? mockTopAprendizes
+    : dashboardData?.topAprendizes || [];
+  const estatisticas = USE_MOCKED_DATA
+    ? mockEstatisticas
+    : dashboardData?.estatisticas || [];
 
   // Refs
   const notificacaoBoxRef = useRef(null);
@@ -66,14 +84,23 @@ export default function Dashboard() {
       }
 
       // Modais
-      if (modalDadosRef.current && !modalDadosRef.current.contains(event.target)) {
-        setModalVisivel(prev => ({...prev, dados: false}));
+      if (
+        modalDadosRef.current &&
+        !modalDadosRef.current.contains(event.target)
+      ) {
+        setModalVisivel((prev) => ({ ...prev, dados: false }));
       }
-      if (modalSenhaRef.current && !modalSenhaRef.current.contains(event.target)) {
-        setModalVisivel(prev => ({...prev, senha: false}));
+      if (
+        modalSenhaRef.current &&
+        !modalSenhaRef.current.contains(event.target)
+      ) {
+        setModalVisivel((prev) => ({ ...prev, senha: false }));
       }
-      if (modalTermosRef.current && !modalTermosRef.current.contains(event.target)) {
-        setModalVisivel(prev => ({...prev, termos: false}));
+      if (
+        modalTermosRef.current &&
+        !modalTermosRef.current.contains(event.target)
+      ) {
+        setModalVisivel((prev) => ({ ...prev, termos: false }));
       }
     };
 
@@ -85,14 +112,14 @@ export default function Dashboard() {
   const toggleMenu = () => setMenuAberto(!menuAberto);
 
   const toggleCaixa = (tipo) => {
-    setCaixaAberta(prev => ({
+    setCaixaAberta((prev) => ({
       notificacao: tipo === 'notificacao' ? !prev.notificacao : false,
       perfil: tipo === 'perfil' ? !prev.perfil : false
     }));
   };
 
   const toggleModal = (tipo) => {
-    setModalVisivel(prev => ({
+    setModalVisivel((prev) => ({
       ...prev,
       [tipo]: !prev[tipo],
       perfil: false // Fecha a caixa de perfil ao abrir modal
@@ -100,7 +127,7 @@ export default function Dashboard() {
   };
 
   const toggleSenha = (tipo) => {
-    setSenhaVisivel(prev => ({ ...prev, [tipo]: !prev[tipo] }));
+    setSenhaVisivel((prev) => ({ ...prev, [tipo]: !prev[tipo] }));
   };
 
   const handleVerRanking = () => {
@@ -113,10 +140,10 @@ export default function Dashboard() {
     // Limpar dados de autenticação (ajuste conforme sua implementação)
     localStorage.removeItem('token');
     localStorage.removeItem('userData');
-    
+
     // Redirecionar para a página de login
     navigate('/login', { replace: true });
-    
+
     // Fechar a caixa de perfil
     setCaixaAberta({ ...caixaAberta, perfil: false });
   };
@@ -126,21 +153,25 @@ export default function Dashboard() {
       {/* Menu Lateral */}
       <div className={`menu-lateral ${menuAberto ? '' : 'menu-fechado'}`}>
         <div className="logo-container">
-          <img 
-            src="src/imagens/logo-aberta.png" 
-            className={`logo logo-aberta ${menuAberto ? 'visivel' : 'escondido'}`} 
+          <img
+            src="src/imagens/logo-aberta.png"
+            className={`logo logo-aberta ${
+              menuAberto ? 'visivel' : 'escondido'
+            }`}
             alt="Logo Jotanunes"
           />
-          <img 
-            src="src/imagens/logo-fechada.png" 
-            className={`logo logo-fechada ${!menuAberto ? 'visivel' : 'escondido'}`} 
+          <img
+            src="src/imagens/logo-fechada.png"
+            className={`logo logo-fechada ${
+              !menuAberto ? 'visivel' : 'escondido'
+            }`}
             alt="Logo Jotanunes"
           />
           <button id="toggle-menu" onClick={toggleMenu}>
-            <img 
-              src="src/imagens/seta-voltar.png" 
-              alt="Toggle Menu" 
-              className={`seta ${menuAberto ? '' : 'invertida'}`} 
+            <img
+              src="src/imagens/seta-voltar.png"
+              alt="Toggle Menu"
+              className={`seta ${menuAberto ? '' : 'invertida'}`}
             />
           </button>
         </div>
@@ -148,31 +179,51 @@ export default function Dashboard() {
         <ul className="menu-itens">
           <li>
             <a href="/dashboard">
-              <img src="src/imagens/icone-home.png" alt="Página Inicial" className="icone-menu" />
+              <img
+                src="src/imagens/icone-home.png"
+                alt="Página Inicial"
+                className="icone-menu"
+              />
               {menuAberto && <span>Página Inicial</span>}
             </a>
           </li>
           <li>
             <a href="/trilhas">
-              <img src="src/imagens/icone-trilha.png" alt="Trilhas" className="icone-menu" />
+              <img
+                src="src/imagens/icone-trilha.png"
+                alt="Trilhas"
+                className="icone-menu"
+              />
               {menuAberto && <span>Trilhas</span>}
             </a>
           </li>
           <li>
             <a href="#">
-              <img src="src/imagens/icone-certificados.png" alt="Certificados" className="icone-menu" />
+              <img
+                src="src/imagens/icone-certificados.png"
+                alt="Certificados"
+                className="icone-menu"
+              />
               {menuAberto && <span>Certificados</span>}
             </a>
           </li>
           <li>
             <a href="#">
-              <img src="src/imagens/icone-desafios.png" alt="Desafios" className="icone-menu" />
+              <img
+                src="src/imagens/icone-desafios.png"
+                alt="Desafios"
+                className="icone-menu"
+              />
               {menuAberto && <span>Desafios</span>}
             </a>
           </li>
           <li>
             <a href="#">
-              <img src="src/imagens/icone-loja.png" alt="Loja" className="icone-menu" />
+              <img
+                src="src/imagens/icone-loja.png"
+                alt="Loja"
+                className="icone-menu"
+              />
               {menuAberto && <span>Loja</span>}
             </a>
           </li>
@@ -183,14 +234,16 @@ export default function Dashboard() {
       <main className="conteudo">
         <header>
           <input type="search" placeholder="Buscar..." />
-          <h1>Bem-vindo, João!</h1>
-          <p className="welcome-text">Bem-vindo de volta à sua jornada de capacitação na Jotanunes.</p>
+          <h1>Bem-vindo, {dashboardData?.user?.nome || 'Usuário'}!</h1>
+          <p className="welcome-text">
+            Bem-vindo de volta à sua jornada de capacitação na Jotanunes.
+          </p>
         </header>
 
         {/* Ícones Superiores */}
         <div className="icones-superiores">
-          <div 
-            id="notificacao-icon" 
+          <div
+            id="notificacao-icon"
             className="icone"
             onClick={(e) => {
               e.stopPropagation();
@@ -199,8 +252,8 @@ export default function Dashboard() {
           >
             <img src="src/imagens/notificacao.png" alt="Notificação" />
           </div>
-          <div 
-            id="perfil-icon" 
+          <div
+            id="perfil-icon"
             className="icone"
             onClick={(e) => {
               e.stopPropagation();
@@ -216,27 +269,37 @@ export default function Dashboard() {
 
         {/* Caixa de Notificação */}
         {caixaAberta.notificacao && (
-          <div 
+          <div
             ref={notificacaoBoxRef}
             className="box-notificacao"
-            onClick={e => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
           >
             <div className="box-header">Notificações</div>
             <ul className="mensagens">
-              <li><span className="ponto-vermelho">•</span> Nova mensagem de sistema</li>
-              <li><span className="ponto-vermelho">•</span> Atualização de perfil disponível</li>
-              <li><span className="ponto-vermelho">•</span> Novo evento agendado</li>
+              <li>
+                <span className="ponto-vermelho">•</span> Nova mensagem de
+                sistema
+              </li>
+              <li>
+                <span className="ponto-vermelho">•</span> Atualização de perfil
+                disponível
+              </li>
+              <li>
+                <span className="ponto-vermelho">•</span> Novo evento agendado
+              </li>
             </ul>
-            <a href="#" className="link-limpar">Limpar Mensagens</a>
+            <a href="#" className="link-limpar">
+              Limpar Mensagens
+            </a>
           </div>
         )}
 
         {/* Caixa de Perfil */}
         {caixaAberta.perfil && (
-          <div 
+          <div
             ref={perfilBoxRef}
             className="box-perfil"
-            onClick={e => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
           >
             <div className="perfil-header">Perfil</div>
             <div className="foto-perfil">
@@ -252,7 +315,7 @@ export default function Dashboard() {
                 850
               </div>
             </div>
-            <button 
+            <button
               className="perfil-opcao"
               onClick={(e) => {
                 e.preventDefault();
@@ -262,17 +325,20 @@ export default function Dashboard() {
               <img src="src/imagens/icone-perfil-dados.png" alt="Meus Dados" />
               <span>Meus Dados</span>
             </button>
-            <button 
+            <button
               className="perfil-opcao"
               onClick={(e) => {
                 e.preventDefault();
                 toggleModal('senha');
               }}
             >
-              <img src="src/imagens/icone-perfil-seguranca.png" alt="Segurança" />
+              <img
+                src="src/imagens/icone-perfil-seguranca.png"
+                alt="Segurança"
+              />
               <span>Segurança</span>
             </button>
-            <button 
+            <button
               className="perfil-opcao"
               onClick={(e) => {
                 e.preventDefault();
@@ -282,7 +348,7 @@ export default function Dashboard() {
               <img src="src/imagens/icone-perfil-termos.png" alt="Termos" />
               <span>Termos e Condições</span>
             </button>
-            <button 
+            <button
               className="perfil-opcao logout-btn"
               onClick={(e) => {
                 e.preventDefault();
@@ -300,42 +366,52 @@ export default function Dashboard() {
           {/* Card Próximos Passos */}
           <div className="proximos-passos">
             <h2>Próximos Passos</h2>
-            {progressos.map((item, index) => (
-              <div key={index} className="passo">
-                <p>{item.titulo}</p>
-                <div className="barra-progresso">
-                  <div 
-                    className="progresso" 
-                    style={{ width: `${item.progresso}%` }}
-                  ></div>
+            {isLoading ? (
+              <p>Carregando progressos...</p>
+            ) : error ? (
+              <p>Erro ao carregar progressos: {error.message}</p>
+            ) : (
+              progressos.map((item, index) => (
+                <div key={index} className="passo">
+                  <p>{item.titulo}</p>
+                  <div className="barra-progresso">
+                    <div
+                      className="progresso"
+                      style={{ width: `${item.progresso}%` }}
+                    ></div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
 
           {/* Card Top Aprendizes */}
           <div className="top-aprendizes">
             <h2>Top Aprendizes da Semana</h2>
-            <ul>
-              {topAprendizes.map((aprendiz, index) => (
-                <li key={index}>
-                  <div className="perfil">
-                    <img 
-                      src={`src/imagens/${aprendiz.foto}`} 
-                      alt={aprendiz.nome} 
-                    />
-                    <span>{aprendiz.nome}</span>
-                  </div>
-                  <div className="pontuacao">
-                    {aprendiz.pontos} <img src="src/imagens/estrela.png" alt="estrela" />
-                  </div>
-                </li>
-              ))}
-            </ul>
-            <button 
-              id="ver-ranking"
-              onClick={handleVerRanking}
-            >
+            {isLoading ? (
+              <p>Carregando top aprendizes...</p>
+            ) : error ? (
+              <p>Erro ao carregar top aprendizes: {error.message}</p>
+            ) : (
+              <ul>
+                {topAprendizes.map((aprendiz, index) => (
+                  <li key={index}>
+                    <div className="perfil">
+                      <img
+                        src={`src/imagens/${aprendiz.foto}`}
+                        alt={aprendiz.nome}
+                      />
+                      <span>{aprendiz.nome}</span>
+                    </div>
+                    <div className="pontuacao">
+                      {aprendiz.pontos}{' '}
+                      <img src="src/imagens/estrela.png" alt="estrela" />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <button id="ver-ranking" onClick={handleVerRanking}>
               Ver ranking completo
             </button>
           </div>
@@ -343,18 +419,21 @@ export default function Dashboard() {
 
         {/* Rodapé com Estatísticas */}
         <footer className="estatisticas">
-          {estatisticas.map((estat, index) => (
-            <div key={index} className="estatistica-card">
-              <div className="estatistica-conteudo">
-                <span className="numero">{estat.valor}</span>
-                <span className="nome">{estat.label}</span>
+          {isLoading ? (
+            <p>Carregando estatísticas...</p>
+          ) : error ? (
+            <p>Erro ao carregar estatísticas: {error.message}</p>
+          ) : (
+            estatisticas.map((estat, index) => (
+              <div key={index} className="estatistica-card">
+                <div className="estatistica-conteudo">
+                  <span className="numero">{estat.valor}</span>
+                  <span className="nome">{estat.label}</span>
+                </div>
+                <img src={`src/imagens/${estat.icone}`} alt={estat.label} />
               </div>
-              <img 
-                src={`src/imagens/${estat.icone}`} 
-                alt={estat.label} 
-              />
-            </div>
-          ))}
+            ))
+          )}
           <div className="imagens-extra">
             <img src="src/imagens/icone-extras.png" alt="Imagem Extra" />
           </div>
@@ -363,25 +442,21 @@ export default function Dashboard() {
 
       {/* Modal Meus Dados */}
       {modalVisivel.dados && (
-        <div 
+        <div
           className="modal"
-          onClick={() => setModalVisivel({...modalVisivel, dados: false})}
+          onClick={() => setModalVisivel({ ...modalVisivel, dados: false })}
         >
-          <div 
-            className="modal-conteudo"
-            onClick={(e) => e.stopPropagation()}
-          >
-             <span 
+          <div className="modal-conteudo" onClick={(e) => e.stopPropagation()}>
+            <span
               className="fechar-modal"
-              onClick={() => setModalVisivel({...modalVisivel, termos: false})}
+              onClick={() =>
+                setModalVisivel({ ...modalVisivel, termos: false })
+              }
             >
               &times;
             </span>
-            <div className='modal-foto'>
-            <img 
-              src="src/imagens/perfil-modal.jpg" 
-              alt="Foto de perfil" 
-            />
+            <div className="modal-foto">
+              <img src="src/imagens/perfil-modal.jpg" alt="Foto de perfil" />
             </div>
             <h2>Meus Dados</h2>
             <div className="dados-usuario">
@@ -408,25 +483,24 @@ export default function Dashboard() {
 
       {/* Modal Alterar Senha */}
       {modalVisivel.senha && (
-        <div 
+        <div
           className="modal"
-          onClick={() => setModalVisivel({...modalVisivel, senha: false})}
+          onClick={() => setModalVisivel({ ...modalVisivel, senha: false })}
         >
-          <div 
-            className="modal-conteudo"
-            onClick={(e) => e.stopPropagation()}
-          >
-             <span 
+          <div className="modal-conteudo" onClick={(e) => e.stopPropagation()}>
+            <span
               className="fechar-modal"
-              onClick={() => setModalVisivel({...modalVisivel, termos: false})}
+              onClick={() =>
+                setModalVisivel({ ...modalVisivel, termos: false })
+              }
             >
               &times;
             </span>
             <div className="modal-foto">
-            <img 
-              src="src/imagens/perfil-seguranca.png" 
-              alt="Ícone de Segurança"  
-            />
+              <img
+                src="src/imagens/perfil-seguranca.png"
+                alt="Ícone de Segurança"
+              />
             </div>
             <h2>Segurança</h2>
             <p>Altere sua senha aqui</p>
@@ -434,20 +508,24 @@ export default function Dashboard() {
               <div className="modal-campo">
                 <label>Senha Atual</label>
                 <div className="senha-container">
-                  <input 
-                    type={senhaVisivel.atual ? "text" : "password"} 
-                    placeholder="Digite sua senha atual aqui" 
-                    className="senha-input" 
+                  <input
+                    type={senhaVisivel.atual ? 'text' : 'password'}
+                    placeholder="Digite sua senha atual aqui"
+                    className="senha-input"
                   />
-                  <span 
+                  <span
                     className="toggle-senha"
                     onClick={() => toggleSenha('atual')}
                   >
                     <img
-                      src={senhaVisivel.atual 
-                        ? "src/imagens/olho-fechado-modal-senha.png" 
-                        : "src/imagens/olho-aberto-modal-senha.png"}
-                      alt={senhaVisivel.atual ? "Ocultar Senha" : "Mostrar Senha"}
+                      src={
+                        senhaVisivel.atual
+                          ? 'src/imagens/olho-fechado-modal-senha.png'
+                          : 'src/imagens/olho-aberto-modal-senha.png'
+                      }
+                      alt={
+                        senhaVisivel.atual ? 'Ocultar Senha' : 'Mostrar Senha'
+                      }
                     />
                   </span>
                 </div>
@@ -455,20 +533,24 @@ export default function Dashboard() {
               <div className="modal-campo">
                 <label>Nova Senha</label>
                 <div className="senha-container">
-                  <input 
-                    type={senhaVisivel.nova ? "text" : "password"} 
-                    placeholder="Digite sua nova senha aqui" 
-                    className="senha-input" 
+                  <input
+                    type={senhaVisivel.nova ? 'text' : 'password'}
+                    placeholder="Digite sua nova senha aqui"
+                    className="senha-input"
                   />
-                  <span 
+                  <span
                     className="toggle-senha"
                     onClick={() => toggleSenha('nova')}
                   >
                     <img
-                      src={senhaVisivel.nova 
-                        ? "src/imagens/olho-fechado-modal-senha.png" 
-                        : "src/imagens/olho-aberto-modal-senha.png"}
-                      alt={senhaVisivel.nova ? "Ocultar Senha" : "Mostrar Senha"}
+                      src={
+                        senhaVisivel.nova
+                          ? 'src/imagens/olho-fechado-modal-senha.png'
+                          : 'src/imagens/olho-aberto-modal-senha.png'
+                      }
+                      alt={
+                        senhaVisivel.nova ? 'Ocultar Senha' : 'Mostrar Senha'
+                      }
                     />
                   </span>
                 </div>
@@ -476,20 +558,26 @@ export default function Dashboard() {
               <div className="modal-campo">
                 <label>Confirmar Senha</label>
                 <div className="senha-container">
-                  <input 
-                    type={senhaVisivel.confirmacao ? "text" : "password"} 
-                    placeholder="Confirme sua senha aqui" 
-                    className="senha-input" 
+                  <input
+                    type={senhaVisivel.confirmacao ? 'text' : 'password'}
+                    placeholder="Confirme sua senha aqui"
+                    className="senha-input"
                   />
-                  <span 
+                  <span
                     className="toggle-senha"
                     onClick={() => toggleSenha('confirmacao')}
                   >
                     <img
-                      src={senhaVisivel.confirmacao 
-                        ? "src/imagens/olho-fechado-modal-senha.png" 
-                        : "src/imagens/olho-aberto-modal-senha.png"}
-                      alt={senhaVisivel.confirmacao ? "Ocultar Senha" : "Mostrar Senha"}
+                      src={
+                        senhaVisivel.confirmacao
+                          ? 'src/imagens/olho-fechado-modal-senha.png'
+                          : 'src/imagens/olho-aberto-modal-senha.png'
+                      }
+                      alt={
+                        senhaVisivel.confirmacao
+                          ? 'Ocultar Senha'
+                          : 'Mostrar Senha'
+                      }
                     />
                   </span>
                 </div>
@@ -502,39 +590,56 @@ export default function Dashboard() {
 
       {/* Modal Termos e Condições */}
       {modalVisivel.termos && (
-        <div 
+        <div
           ref={modalTermosRef}
           className={`modal ${modalVisivel.termos ? 'active' : ''}`}
-          onClick={(e) => e.target === modalTermosRef.current && setModalVisivel({...modalVisivel, termos: false})}
+          onClick={(e) =>
+            e.target === modalTermosRef.current &&
+            setModalVisivel({ ...modalVisivel, termos: false })
+          }
         >
-          <div className="modal-conteudo" onClick={e => e.stopPropagation()}>
-            <span 
+          <div className="modal-conteudo" onClick={(e) => e.stopPropagation()}>
+            <span
               className="fechar-modal"
-              onClick={() => setModalVisivel({...modalVisivel, termos: false})}
+              onClick={() =>
+                setModalVisivel({ ...modalVisivel, termos: false })
+              }
             >
               &times;
             </span>
             <div className="modal-foto">
-              <img 
-                src="src/imagens/perfil-modal-termos.png" 
-                alt="Termos e Condições" 
+              <img
+                src="src/imagens/perfil-modal-termos.png"
+                alt="Termos e Condições"
               />
             </div>
             <h2>Termos e Condições</h2>
             <div className="termos-texto">
               <p>
-                1. <strong>Aceitação dos Termos:</strong> 
-                <br />1.1. Ao acessar e utilizar a plataforma de treinamento online da Jotanunes, o usuário concorda com estes Termos de Uso. Caso não concorde, deve interromper o uso imediatamente.
+                1. <strong>Aceitação dos Termos:</strong>
+                <br />
+                1.1. Ao acessar e utilizar a plataforma de treinamento online da
+                Jotanunes, o usuário concorda com estes Termos de Uso. Caso não
+                concorde, deve interromper o uso imediatamente.
               </p>
               <p>
                 2. <strong>Cadastro e Conta do Usuário:</strong>
-                <br />2.1. Para utilizar os serviços da plataforma, é necessário criar uma conta, fornecendo informações verdadeiras e atualizadas.
-                <br />2.2. O usuário é responsável pela segurança de suas credenciais de acesso e deve notificar a Jotanunes imediatamente em caso de uso não autorizado de sua conta.
+                <br />
+                2.1. Para utilizar os serviços da plataforma, é necessário criar
+                uma conta, fornecendo informações verdadeiras e atualizadas.
+                <br />
+                2.2. O usuário é responsável pela segurança de suas credenciais
+                de acesso e deve notificar a Jotanunes imediatamente em caso de
+                uso não autorizado de sua conta.
               </p>
               <p>
                 3. <strong>Uso da Plataforma:</strong>
-                <br />3.1. A plataforma é destinada exclusivamente a treinamentos oferecidos pela Jotanunes, e o usuário deve utilizá-la de forma ética e legal.
-                <br />3.2. É proibida a reprodução ou compartilhamento.
+                <br />
+                3.1. A plataforma é destinada exclusivamente a treinamentos
+                oferecidos pela Jotanunes, e o usuário deve utilizá-la de forma
+                ética e legal.
+                <br />
+                3.2. É proibida a reprodução ou compartilhamento.
               </p>
             </div>
           </div>

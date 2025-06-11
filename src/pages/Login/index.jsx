@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext'; // Importa o hook useAuth
 import './style.css';
 
-import logo from '../../imagens/logo.png';
-import mascote from '../../imagens/mascote.png';
 import emoji from '../../imagens/emoji.png';
 import item1 from '../../imagens/itens-login-1.png';
 import item2 from '../../imagens/itens-login-2.png';
@@ -13,18 +12,19 @@ import item5 from '../../imagens/itens-login-5.png';
 import item6 from '../../imagens/itens-login-6.png';
 import item7 from '../../imagens/itens-login-7.png';
 import item8 from '../../imagens/itens-login-8.png';
+import logo from '../../imagens/logo.png';
+import mascote from '../../imagens/mascote.png';
 
 export default function Login() {
-  // Estados do formulário principal - MODIFICADO
   const [loginInput, setLoginInput] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth(); // Usa o hook useAuth para acessar a função de login
   const [errors, setErrors] = useState({
     loginInput: '',
     password: ''
   });
 
-  // Estados do modal de recuperação (mantidos iguais)
   const [modalOpen, setModalOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [recoveryEmail, setRecoveryEmail] = useState('');
@@ -39,47 +39,44 @@ export default function Login() {
     oneSpecial: false
   });
 
-  // Handlers do formulário principal - MODIFICADO
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
+    // Adiciona async
     e.preventDefault();
     console.log('Função handleLogin chamada!');
-    
-const newErrors = {};
-  
-  if (!loginInput.trim()) {
-    newErrors.loginInput = 'Insira seu e-mail ou matrícula';
-  } else {
-    if (/[a-zA-Z]/.test(loginInput)) {
-      // Validação como e-mail
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(loginInput)) {
-        newErrors.loginInput = 'E-mail inválido';
-      }
+
+    const newErrors = {};
+
+    if (!loginInput.trim()) {
+      newErrors.loginInput = 'Insira seu e-mail ou matrícula';
     } else {
-      // Validação como matrícula
-      if (!/^\d{10}$/.test(loginInput)) {
-        newErrors.loginInput = 'Matrícula deve ter exatamente 10 dígitos';
+      if (/[a-zA-Z]/.test(loginInput)) {
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(loginInput)) {
+          newErrors.loginInput = 'E-mail inválido';
+        }
+      } else {
+        if (!/^\d{10}$/.test(loginInput)) {
+          newErrors.loginInput = 'Matrícula deve ter exatamente 10 dígitos';
+        }
       }
     }
-  }
-    
-    // Validação da senha (mantida igual)
+
     if (!password.trim()) newErrors.password = 'Insira sua senha';
 
     setErrors(newErrors);
 
-    // Lógica de autenticação - MODIFICADA
     if (Object.keys(newErrors).length === 0) {
-      if (
-        (loginInput === 'user@gmail.com' && password === 'senha123') ||
-        (loginInput === '1234567890' && password === 'senha123') 
-      ) {
-        console.log('Credenciais válidas!');
+      try {
+        await login(loginInput, password); // Chama a função de login do contexto
         navigate('/dashboard');
-      } 
+      } catch (error) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          password: error.message || 'Credenciais inválidas'
+        }));
+      }
     }
   };
 
-  // Handlers do modal de recuperação
   const handleOpenModal = (e) => {
     e.preventDefault();
     setModalOpen(true);
@@ -92,14 +89,14 @@ const newErrors = {};
     setRecoveryCode('');
     setNewPassword('');
     setConfirmPassword('');
-    setErrors({...errors, recoveryEmail: '', password: ''});
+    setErrors({ ...errors, recoveryEmail: '', password: '' });
   };
 
   const handleSendCode = (e) => {
     e.preventDefault();
-    
+
     if (!recoveryEmail.includes('@gmail.com')) {
-      setErrors({...errors, recoveryEmail: 'Informe um e-mail válido'});
+      setErrors({ ...errors, recoveryEmail: 'Informe um e-mail válido' });
       return;
     }
     setCurrentStep(1);
@@ -113,7 +110,7 @@ const newErrors = {};
   const handlePasswordChange = (e) => {
     const password = e.target.value;
     setNewPassword(password);
-    
+
     setPasswordRequirements({
       charLength: password.length >= 8,
       oneNumber: /\d/.test(password),
@@ -125,13 +122,14 @@ const newErrors = {};
 
   const handleResetPassword = (e) => {
     e.preventDefault();
-    
-    const allRequirementsMet = Object.values(passwordRequirements).every(Boolean);
+
+    const allRequirementsMet =
+      Object.values(passwordRequirements).every(Boolean);
     if (!allRequirementsMet || newPassword !== confirmPassword) {
-      setErrors({...errors, password: 'Senha inválida ou não confere'});
+      setErrors({ ...errors, password: 'Senha inválida ou não confere' });
       return;
     }
-    
+
     setCurrentStep(3);
     // Aqui sera a chamada API para resetar a senha
   };
@@ -141,7 +139,7 @@ const newErrors = {};
       {/* Formulário Principal */}
       <div className="form-container">
         <img src={logo} alt="Logo Jotanunes" className="logo-topo" />
-        
+
         {/* Itens decorativos (ajuste os imports no topo) */}
         <img src={item1} alt="Item decorativo" className="itens-login-1" />
         <img src={item2} alt="Item decorativo" className="itens-login-2" />
@@ -153,41 +151,53 @@ const newErrors = {};
         <img src={item8} alt="Item decorativo" className="itens-login-8" />
 
         <div className="form-content">
-            <h1>Bem-vindo ao Sistema de treinamentos da Jotanunes!</h1>
-            <p className="subtitulo">Treinamento e evolução em um só lugar</p>
+          <h1>Bem-vindo ao Sistema de treinamentos da Jotanunes!</h1>
+          <p className="subtitulo">Treinamento e evolução em um só lugar</p>
 
-            <form onSubmit={handleLogin}>
-              <label htmlFor="loginInput">E-mail ou Matrícula</label>
-              <input
-                type="text"
-                id="loginInput"
-                value={loginInput}
-                onChange={(e) => setLoginInput(e.target.value)}
-                placeholder="Digite seu e-mail ou matrícula"
-                className={errors.loginInput ? 'input-error' : ''}
-              />
-              {errors.loginInput && <span className="error">{errors.loginInput}</span>}
-              
-              <label htmlFor="senha">Senha</label>
-              <input
-                type="password"
-                id="senha"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Digite sua senha"
-                className={errors.password ? 'input-error' : ''}
-              />
-              {errors.password && <span className="error">{errors.password}</span>}
+          <form onSubmit={handleLogin}>
+            <label htmlFor="loginInput">E-mail ou Matrícula</label>
+            <input
+              type="text"
+              id="loginInput"
+              value={loginInput}
+              onChange={(e) => setLoginInput(e.target.value)}
+              placeholder="Digite seu e-mail ou matrícula"
+              className={errors.loginInput ? 'input-error' : ''}
+            />
+            {errors.loginInput && (
+              <span className="error">{errors.loginInput}</span>
+            )}
 
-            <button type="button" className="esqueceu" onClick={handleOpenModal}>
-                Esqueceu a senha?
+            <label htmlFor="senha">Senha</label>
+            <input
+              type="password"
+              id="senha"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Digite sua senha"
+              className={errors.password ? 'input-error' : ''}
+            />
+            {errors.password && (
+              <span className="error">{errors.password}</span>
+            )}
+
+            <button
+              type="button"
+              className="esqueceu"
+              onClick={handleOpenModal}
+            >
+              Esqueceu a senha?
             </button>
-            
-            <button type="submit" className="button">Entrar</button>
-            </form>
 
-            <p className="footer">Jotanunes Construtora © Todos os Direitos Reservados</p>
-        </div>    
+            <button type="submit" className="button">
+              Entrar
+            </button>
+          </form>
+
+          <p className="footer">
+            Jotanunes Construtora © Todos os Direitos Reservados
+          </p>
+        </div>
       </div>
 
       {/* Lado do Mascote */}
@@ -207,14 +217,19 @@ const newErrors = {};
         <div className="modal-overlay">
           <div className="modal">
             <div className="modal-content">
-              <span className="close-modal" onClick={handleCloseModal}>&times;</span>
+              <span className="close-modal" onClick={handleCloseModal}>
+                &times;
+              </span>
 
               {/* Step 1: Email */}
               {currentStep === 0 && (
                 <div className="step active">
                   <img src={emoji} alt="Emoji" className="emoji-icon" />
                   <h2 className="modal-step1-title">Recuperação de Senha</h2>
-                  <p className="modal-step1-text">Para recuperar seu acesso à plataforma novamente, vamos enviar um código de 4 dígitos para redefinir sua senha.</p>
+                  <p className="modal-step1-text">
+                    Para recuperar seu acesso à plataforma novamente, vamos
+                    enviar um código de 4 dígitos para redefinir sua senha.
+                  </p>
                   <input
                     type="email"
                     value={recoveryEmail}
@@ -223,7 +238,9 @@ const newErrors = {};
                     className={errors.recoveryEmail ? 'input-error' : ''}
                   />
                   {errors.recoveryEmail && (
-                    <span className="error-message active">{errors.recoveryEmail}</span>
+                    <span className="error-message active">
+                      {errors.recoveryEmail}
+                    </span>
                   )}
                   <button onClick={handleSendCode}>CONTINUE</button>
                 </div>
@@ -233,7 +250,9 @@ const newErrors = {};
               {currentStep === 1 && (
                 <div className="step active">
                   <h2 className="modal-step2-title">Digite o Código</h2>
-                  <p className="modal-step2-text">Insira o código de 4 dígitos enviado para seu e-mail:</p>
+                  <p className="modal-step2-text">
+                    Insira o código de 4 dígitos enviado para seu e-mail:
+                  </p>
                   <input
                     type="text"
                     value={recoveryCode}
@@ -258,11 +277,31 @@ const newErrors = {};
                     className={errors.password ? 'input-error' : ''}
                   />
                   <ul className="password-requirements">
-                    <li className={passwordRequirements.charLength ? 'valid' : ''}>Mínimo 8 caracteres</li>
-                    <li className={passwordRequirements.oneNumber ? 'valid' : ''}>Pelo menos 1 número</li>
-                    <li className={passwordRequirements.oneUpper ? 'valid' : ''}>Pelo menos 1 letra maiúscula</li>
-                    <li className={passwordRequirements.oneLower ? 'valid' : ''}>Pelo menos 1 letra minúscula</li>
-                    <li className={passwordRequirements.oneSpecial ? 'valid' : ''}>Pelo menos 1 caractere especial</li>
+                    <li
+                      className={passwordRequirements.charLength ? 'valid' : ''}
+                    >
+                      Mínimo 8 caracteres
+                    </li>
+                    <li
+                      className={passwordRequirements.oneNumber ? 'valid' : ''}
+                    >
+                      Pelo menos 1 número
+                    </li>
+                    <li
+                      className={passwordRequirements.oneUpper ? 'valid' : ''}
+                    >
+                      Pelo menos 1 letra maiúscula
+                    </li>
+                    <li
+                      className={passwordRequirements.oneLower ? 'valid' : ''}
+                    >
+                      Pelo menos 1 letra minúscula
+                    </li>
+                    <li
+                      className={passwordRequirements.oneSpecial ? 'valid' : ''}
+                    >
+                      Pelo menos 1 caractere especial
+                    </li>
                   </ul>
                   <input
                     type="password"
@@ -272,18 +311,27 @@ const newErrors = {};
                     className={errors.password ? 'input-error' : ''}
                   />
                   {errors.password && (
-                    <span className="error-message active">{errors.password}</span>
+                    <span className="error-message active">
+                      {errors.password}
+                    </span>
                   )}
                   <button onClick={handleResetPassword}>CONTINUE</button>
                 </div>
               )}
 
               {/* Step 4: Confirmação */}
-                {currentStep === 3 && (
+              {currentStep === 3 && (
                 <div className="step active">
-                    <h2 className="modal-step4-title">Sucesso!</h2>
-                    <p className="modal-step4-text">Sua senha foi redefinida com sucesso.</p>
-                    <button className="modal-confirm-btn" onClick={handleCloseModal}>OK</button>
+                  <h2 className="modal-step4-title">Sucesso!</h2>
+                  <p className="modal-step4-text">
+                    Sua senha foi redefinida com sucesso.
+                  </p>
+                  <button
+                    className="modal-confirm-btn"
+                    onClick={handleCloseModal}
+                  >
+                    OK
+                  </button>
                 </div>
               )}
             </div>
