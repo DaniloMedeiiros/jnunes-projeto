@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
+import dashboardService from '../services/dashboardService';
 import trilhaService from '../services/trilhaService';
 import userService from '../services/userService';
-// Importe outros serviços conforme necessário para o dashboard
 
 const useDashboardData = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -15,9 +15,18 @@ const useDashboardData = () => {
         // Exemplo de busca de dados:
         const user = await userService.getUserProfile();
         const trilhas = await trilhaService.getTrilhas();
-        // Adicione outras chamadas de serviço aqui
+        const progressos = await dashboardService.getDashboardProgressos();
+        const topAprendizes =
+          await dashboardService.getDashboardTopAprendizes();
+        const estatisticas = await dashboardService.getDashboardEstatisticas();
 
-        setDashboardData({ user, trilhas /*, outros dados */ });
+        setDashboardData({
+          user,
+          trilhas,
+          progressos,
+          topAprendizes,
+          estatisticas
+        });
       } catch (err) {
         setError(err);
       } finally {
