@@ -10,7 +10,7 @@ const CursoDetalhes = () => {
       try {
         // Importação dinâmica ajustada para a estrutura de pastas
         const cursoMap = {
-          1: () => import('./Curso1'),
+          1: () => import('./Curso1/InformacoesGerais'),
           // Adicione outros cursos conforme necessário
         };
 

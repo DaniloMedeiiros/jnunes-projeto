@@ -1,4 +1,4 @@
-/* BACKGROUND */
+/* Background (integrado da página de trilhas) */
 .trilha-conteudo-secao-container::before {
   content: '';
   position: fixed;
@@ -16,8 +16,7 @@
   image-rendering: crisp-edges;
 }
 
-
-/* MENU LATERAL */
+/* Menu Lateral (integrado da página de trilhas) */
 .trilha-conteudo-secao-menu-lateral {
   width: 250px;
   height: 100vh;
@@ -153,7 +152,7 @@
   display: none;
 }
 
-/* HEADER */
+/* Container do header */
 .trilha-conteudo-secao-header-container {
   background-color: white;
   padding: 20px;
@@ -162,11 +161,11 @@
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
+/* Seta de voltar */
 .trilha-conteudo-secao-voltar {
   transition: transform 0.2s;
   cursor: pointer;
 }
-
 .trilha-conteudo-secao-voltar:hover {
   transform: scale(1.1);
 }
@@ -174,10 +173,9 @@
 .trilha-conteudo-secao-titulo {
   font-size: 22px;
   font-weight: bold;
-  margin: 0;
 }
 
-/* ABAS */
+/* Container das abas */
 .trilha-conteudo-secao-abas-container {
   background-color: white;
   padding: 15px 20px;
@@ -186,6 +184,7 @@
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
+/* Abas */
 .trilha-conteudo-secao-abas {
   display: flex;
   gap: 20px;
@@ -200,7 +199,6 @@
   cursor: pointer;
   color: #555;
   border-bottom: 3px solid transparent;
-  transition: all 0.2s ease;
 }
 
 .trilha-conteudo-secao-aba.ativa {
@@ -209,7 +207,7 @@
   border-color: #e60000;
 }
 
-/* CARD PRINCIPAL */
+/* Container do card */
 .trilha-conteudo-secao-card-container {
   background-color: white;
   padding: 20px;
@@ -218,12 +216,14 @@
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
+/* Card principal */
 .trilha-conteudo-secao-card {
   display: flex;
   background-color: #f9f9f9;
   border-radius: 12px;
   padding: 20px;
   gap: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .trilha-conteudo-secao-imagem {
@@ -238,6 +238,7 @@
   color: #555;
 }
 
+/* Detalhes do card */
 .trilha-conteudo-secao-detalhes {
   flex: 1;
   display: flex;
@@ -294,23 +295,21 @@
   color: #444;
 }
 
-/* DESCRIÇÃO (ABA INFORMAÇÕES GERAIS) */
+/* Container da descrição */
 .trilha-conteudo-secao-descricao-container {
   background-color: white;
   padding: 25px;
   border-radius: 10px;
   border: 1px solid black;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  width: 100%;            
-  max-width: 960px;           
-  box-sizing: border-box;  
-  margin: 0 auto;
 }
 
+/* Descrição */
 .trilha-conteudo-secao-descricao {
   line-height: 1.6;
 }
 
+/* Blocos de conteúdo */
 .trilha-conteudo-secao-bloco {
   margin-bottom: 25px;
 }
@@ -343,114 +342,117 @@
   font-size: 14px;
   display: block;
   margin-top: 10px;
-  transition: background-color 0.2s;
 }
 
-.trilha-conteudo-secao-botao:hover {
-  background-color: #c40000;
+/* Ajuste do container principal */
+.trilha-conteudo-secao-conteudo-principal {
+  margin-left: 270px;
+  padding: 30px;
+  max-width: 1200px;
+  transition: margin-left 0.3s ease;
 }
+
+.trilha-conteudo-secao-menu-lateral.trilha-conteudo-secao-menu-fechado ~ .trilha-conteudo-secao-conteudo-principal {
+  margin-left: 130px;
+}
+
+/*ABA CONTEUDO TRILHA*/
 
 /* CONTEÚDO DA TRILHA (ABA MÓDULOS) */
-.trilha-conteudo-secao-conteudo-container {
+.conteudo-trilha-sessao-container {
   background-color: white;
   border-radius: 12px;
-  padding: 25px;
+  padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  width: 100% !important;         
-  max-width: 960px !important;
-  box-sizing: border-box;  
-  margin: 0 auto;
+  width: 1100px;
+  min-height: 500px;
+  margin-top: 50px;
 }
 
-.trilha-conteudo-secao-progresso {
+.conteudo-trilha-sessao-progresso {
   display: flex;
   align-items: center;
   margin-bottom: 20px;
   gap: 10px;
 }
 
-.trilha-conteudo-secao-barra {
-  width: 100%;
-  height: 10px;
+.conteudo-trilha-sessao-barra {
+  flex: 1;
+  height: 8px;
   background-color: #eee;
-  border-radius: 5px;
+  border-radius: 8px;
   overflow: hidden;
-  position: relative;
 }
 
-.trilha-conteudo-secao-barra-preenchida {
+.conteudo-trilha-sessao-barra-preenchida {
   height: 100%;
   background-color: #e60000;
   transition: width 0.3s ease;
 }
 
-
-.trilha-conteudo-secao-texto-progresso {
+.conteudo-trilha-sessao-texto-progresso {
   font-size: 14px;
   color: #555;
   white-space: nowrap;
 }
 
-.trilha-conteudo-secao-modulo {
+.conteudo-trilha-sessao-modulo {
   border: 1px solid #ddd;
   border-radius: 10px;
   margin-bottom: 12px;
   overflow: hidden;
   transition: all 0.3s ease;
-  width: 100%;
-  max-width: 100%;
 }
 
-.trilha-conteudo-secao-topo {
+.conteudo-trilha-sessao-topo {
   display: flex;
   align-items: center;
   padding: 12px 16px;
   cursor: pointer;
   background-color: #f9f9f9;
   gap: 15px;
-  padding: 12px 20px;
+  height: 80px;
 }
 
-.trilha-conteudo-secao-imagem-modulo {
+.conteudo-trilha-sessao-imagem {
   width: 40px;
   height: 40px;
   object-fit: contain;
 }
 
-.trilha-conteudo-secao-info {
+.conteudo-trilha-sessao-info {
   flex: 1;
 }
 
-.trilha-conteudo-secao-titulo-modulo {
+.conteudo-trilha-sessao-titulo {
   font-weight: bold;
   font-size: 15px;
   margin: 0 0 4px 0;
-  flex-grow: 1;
   color: #333;
 }
 
-.trilha-conteudo-secao-status {
+.conteudo-trilha-sessao-status {
   font-size: 12px;
   font-weight: bold;
 }
 
-.trilha-conteudo-secao-status.concluido {
+.conteudo-trilha-sessao-status.concluido {
   color: #e60000;
 }
 
-.trilha-conteudo-secao-status.parcial {
+.conteudo-trilha-sessao-status.parcial {
   color: #555;
 }
 
-.trilha-conteudo-secao-status.nao-iniciado {
+.conteudo-trilha-sessao-status.nao-iniciado {
   color: #888;
 }
 
-.trilha-conteudo-secao-aulas {
+.conteudo-trilha-sessao-aulas {
   padding: 0 16px 12px 68px;
 }
 
-.trilha-conteudo-secao-aula {
+.conteudo-trilha-sessao-aula {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -462,7 +464,184 @@
   transition: color 0.2s;
 }
 
-.trilha-conteudo-secao-aula:hover {
+.conteudo-trilha-sessao-aula:hover {
   color: #e60000;
 }
 
+/* LAYOUT PRINCIPAL */
+.conteudo-trilha-sessao-principal {
+  margin-left: 270px;
+ padding: 10px 30px 30px 30px;
+  width: 100px;
+  transition: margin-left 0.3s ease;
+}
+
+.conteudo-trilha-sessao-menu-lateral.conteudo-trilha-sessao-menu-fechado ~ .conteudo-trilha-sessao-principal {
+  margin-left: 130px;
+}
+
+/*ABA PLAY VIDEO*/
+
+.video-container {
+  display: flex;
+  flex-direction: row;
+  padding: 20px;
+  gap: 20px;
+  background-color: #fff;
+  min-height: 100vh;
+}
+
+.video-area {
+  flex: 3;
+  background-color: #f5f5f5;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+}
+
+.video-placeholder {
+  width: 100%;
+  height: 380px;
+  background-color: #000;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.aula-info {
+  margin-top: 20px;
+}
+
+.aula-info h3 {
+  margin-bottom: 12px;
+  font-size: 20px;
+  color: #333;
+}
+
+.status-e-botoes {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.status-icone {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+
+.check-vermelho {
+  background-color: red;
+}
+
+.bolinha {
+  background-color: #ccc;
+}
+
+.botoes button {
+  background-color: #ff5a5f;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  margin-right: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.botoes button:hover {
+  background-color: #e04444;
+}
+
+.modulos {
+  flex: 2;
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
+}
+
+.modulo {
+  margin-bottom: 16px;
+}
+
+.modulo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: 12px;
+  background-color: #fff;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.icone-status {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.vermelho {
+  background-color: red;
+}
+
+.cinza {
+  background-color: #aaa;
+}
+
+.aulas {
+  margin-top: 8px;
+  padding-left: 16px;
+}
+
+.aula {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.aula:hover {
+  background-color: #eee;
+}
+
+.aula.ativa {
+  background-color: #ffdcdc;
+}
+
+.icone-aula {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.check-vermelho {
+  background-color: red;
+}
+
+.bolinha-vermelha {
+  background-color: #ff5a5f;
+}
+
+.teste-final {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.teste-final a {
+  color: white;
+  background-color: #ff5a5f;
+  padding: 10px 20px;
+  border-radius: 12px;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.teste-final a:hover {
+  background-color: #e04444;
+}
